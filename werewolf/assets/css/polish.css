@@ -1,0 +1,721 @@
+/* 2026 mobile-first redesign layer */
+:root {
+    --bg-primary: #11140f;
+    --bg-secondary: #171c17;
+    --bg-tertiary: #20261f;
+    --bg-card: rgba(247, 242, 226, 0.075);
+    --bg-card-hover: rgba(247, 242, 226, 0.11);
+    --accent-purple: #4f6f52;
+    --accent-purple-light: #8faf7c;
+    --accent-purple-dark: #263b2a;
+    --accent-gold: #d8b76a;
+    --accent-gold-dark: #9a7531;
+    --accent-red: #c6534b;
+    --accent-red-dark: #81332f;
+    --accent-green: #72b783;
+    --accent-green-dark: #3f7d55;
+    --accent-blue: #70a7b7;
+    --accent-blue-dark: #356579;
+    --accent-orange: #d08a4b;
+    --accent-cyan: #7cc7be;
+    --text-primary: #f4efe3;
+    --text-secondary: #c9c4b5;
+    --text-muted: #888675;
+    --border-color: rgba(244, 239, 227, 0.13);
+    --shadow-glow: 0 18px 48px rgba(25, 35, 24, 0.42);
+    --shadow-card: 0 18px 46px rgba(0, 0, 0, 0.28);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 8px;
+    --radius-xl: 8px;
+    --header-height: 68px;
+    --bottom-nav-height: 72px;
+    --tap-target: 48px;
+}
+
+* {
+    letter-spacing: 0;
+}
+
+html,
+body {
+    background: var(--bg-primary);
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+        linear-gradient(180deg, rgba(17, 20, 15, 0.96), rgba(17, 20, 15, 0.98)),
+        repeating-linear-gradient(135deg, rgba(244, 239, 227, 0.035) 0 1px, transparent 1px 18px);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(216, 183, 106, 0.08), transparent 34%, rgba(112, 167, 183, 0.08)),
+        linear-gradient(180deg, transparent 62%, rgba(0, 0, 0, 0.36));
+    z-index: 0;
+}
+
+.bg-moon,
+.bg-particles {
+    display: none;
+}
+
+svg,
+[data-lucide] {
+    width: 1.15em;
+    height: 1.15em;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.mode-gateway,
+.player-app,
+.app-container {
+    z-index: 2;
+}
+
+.header,
+.bottom-nav {
+    z-index: 900;
+}
+
+.fab {
+    z-index: 890;
+}
+
+.toast-container {
+    z-index: 2000;
+}
+
+.mode-gateway {
+    width: 100%;
+    max-width: 980px;
+    min-height: 100dvh;
+    height: 100dvh;
+    padding: calc(var(--safe-top) + 22px) 18px calc(var(--safe-bottom) + 22px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+}
+
+.mode-hero {
+    text-align: left;
+    display: grid;
+    gap: 10px;
+    padding: 0;
+    min-width: 0;
+}
+
+.mode-hero::before,
+.player-header::before {
+    content: "";
+    width: 46px;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-cyan), var(--accent-green));
+    border-radius: 99px;
+    display: block;
+}
+
+.mode-title,
+.player-logo {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: clamp(2.65rem, 13.8vw, 6.8rem);
+    line-height: 0.96;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-shadow: none;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+.mode-subtitle,
+.player-tagline {
+    max-width: 560px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+.card,
+.player-panel,
+.modal,
+.team-status-panel,
+.night-panel,
+.stat-card,
+.quick-action-btn,
+.mode-choice-card,
+.bottom-sheet {
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(244, 239, 227, 0.085), rgba(244, 239, 227, 0.045)),
+        rgba(17, 20, 15, 0.88);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.card {
+    padding: 16px;
+}
+
+.mode-choice-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.mode-choice-card {
+    min-height: 152px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "icon title"
+        "icon text";
+    align-items: start;
+    gap: 6px 14px;
+    text-align: left;
+}
+
+.mode-choice-card:hover,
+.mode-choice-card:focus-visible,
+.quick-action-btn:hover,
+.quick-action-btn:focus-visible,
+.card:hover {
+    border-color: rgba(216, 183, 106, 0.45);
+}
+
+.mode-choice-icon {
+    grid-area: icon;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    color: var(--accent-gold);
+    background: rgba(216, 183, 106, 0.1);
+}
+
+.mode-choice-title {
+    grid-area: title;
+    font-size: 1.08rem;
+    font-weight: 850;
+    color: var(--text-primary);
+}
+
+.mode-choice-text {
+    grid-area: text;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+.online-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.btn {
+    border-radius: 7px;
+    min-height: var(--tap-target);
+    justify-content: center;
+    font-weight: 800;
+    border: 1px solid transparent;
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-primary,
+.btn-gold {
+    background: linear-gradient(135deg, #d8b76a, #8faf7c);
+    color: #161910;
+    box-shadow: 0 14px 28px rgba(91, 108, 72, 0.28);
+}
+
+.btn-outline {
+    background: rgba(244, 239, 227, 0.04);
+    color: var(--text-primary);
+    border: 1px solid rgba(244, 239, 227, 0.18);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #c6534b, #81332f);
+    color: #fff7ee;
+}
+
+.form-label,
+.stat-label,
+.player-phase-kicker,
+.role-category,
+.player-list-label,
+.timer-label {
+    letter-spacing: 0.06em;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(244, 239, 227, 0.15);
+    color: var(--text-primary);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 4px rgba(216, 183, 106, 0.12);
+}
+
+.player-app {
+    width: 100%;
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow-y: auto;
+    padding: calc(var(--safe-top) + 18px) 16px calc(var(--safe-bottom) + 22px);
+    background: transparent;
+}
+
+.player-header {
+    position: static;
+    min-height: auto;
+    margin: 0 auto 18px;
+    padding: 0;
+    max-width: 760px;
+    text-align: left;
+    align-items: start;
+}
+
+.player-logo {
+    font-size: clamp(2rem, 15vw, 4.6rem);
+}
+
+.player-screen {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.player-login-card {
+    padding: 18px;
+}
+
+.player-login-title,
+.player-section-title,
+.player-card-title,
+.card-title,
+.setup-section-title,
+.modal-title,
+.night-phase-title,
+.game-over-title {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 1.02rem;
+    font-weight: 850;
+    color: var(--text-primary);
+}
+
+.player-login-copy,
+.player-section-copy,
+.player-card-subtitle {
+    color: var(--text-secondary);
+}
+
+.player-game-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: linear-gradient(135deg, rgba(216, 183, 106, 0.16), rgba(112, 167, 183, 0.08));
+}
+
+.phase-night .player-game-top {
+    background: linear-gradient(135deg, rgba(80, 111, 82, 0.26), rgba(198, 83, 75, 0.08));
+}
+
+.player-phase-title {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: clamp(1.55rem, 9vw, 3.2rem);
+    line-height: 0.95;
+}
+
+.status-badge,
+.player-status-chip,
+.player-count-pill,
+.badge,
+.player-role-badge {
+    border-radius: 999px;
+    border: 1px solid rgba(244, 239, 227, 0.13);
+}
+
+.role-panel {
+    display: grid;
+    gap: 16px;
+}
+
+.role-scene {
+    width: min(100%, 280px);
+    margin: 0 auto;
+}
+
+.role-card {
+    border-radius: 8px;
+}
+
+.role-face {
+    border-radius: 8px;
+}
+
+.role-secret-symbol,
+.role-icon,
+.empty-state-icon,
+.game-over-icon,
+.seer-result-icon,
+.transition-icon {
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    color: var(--accent-gold);
+    background: rgba(216, 183, 106, 0.09);
+    border: 1px solid rgba(216, 183, 106, 0.18);
+}
+
+.transition-icon {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 16px;
+}
+
+.empty-state-icon,
+.game-over-icon,
+.seer-result-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+}
+
+.header {
+    height: calc(var(--header-height) + var(--safe-top));
+    padding: var(--safe-top) 14px 0;
+    background: rgba(17, 20, 15, 0.88) !important;
+    border-bottom: 1px solid rgba(244, 239, 227, 0.12) !important;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.26);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.98rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+}
+
+.header-logo svg {
+    color: var(--accent-gold);
+}
+
+.phase-icon,
+.qa-icon,
+.bottom-nav-icon,
+.sheet-menu-item .icon {
+    display: grid;
+    place-items: center;
+    color: var(--accent-gold);
+}
+
+.phase-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(216, 183, 106, 0.1);
+    animation: none;
+}
+
+.phase-text {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.78rem;
+}
+
+.header-icon-btn,
+.player-action-btn,
+.role-count-btn,
+.counter-btn {
+    border-radius: 7px;
+}
+
+.app-container {
+    padding: calc(var(--header-height) + var(--safe-top) + 14px) 12px calc(var(--bottom-nav-height) + var(--safe-bottom) + 18px);
+}
+
+.mode-moderator .app-container {
+    width: min(1040px, 100%);
+    padding-top: calc(var(--header-height) + var(--safe-top) + 18px);
+}
+
+.stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.stat-card {
+    text-align: left;
+    padding: 14px;
+    min-height: 112px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stat-value {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: clamp(2rem, 12vw, 4rem);
+    line-height: 0.9;
+}
+
+.quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.quick-action-btn {
+    min-height: 116px;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-align: left;
+    padding: 14px;
+}
+
+.quick-action-btn .qa-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: rgba(216, 183, 106, 0.1);
+}
+
+.bottom-nav {
+    height: calc(var(--bottom-nav-height) + var(--safe-bottom));
+    background: rgba(17, 20, 15, 0.94);
+    border-top: 1px solid rgba(244, 239, 227, 0.13);
+}
+
+.bottom-nav-item {
+    height: var(--bottom-nav-height);
+    gap: 5px;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.bottom-nav-icon {
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.bottom-nav-item.active {
+    color: var(--accent-gold);
+}
+
+.bottom-nav-item::before {
+    background: var(--accent-gold);
+}
+
+.fab {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d8b76a, #8faf7c);
+    color: #161910;
+}
+
+.bottom-sheet {
+    background: rgba(17, 20, 15, 0.97);
+    border-radius: 8px 8px 0 0;
+}
+
+.sheet-menu-item {
+    border-radius: 7px;
+}
+
+.player-grid,
+.role-grid,
+.help-grid {
+    grid-template-columns: 1fr;
+}
+
+.player-card,
+.player-item,
+.target-btn,
+.vote-btn,
+.role-dist-item,
+.assignment-row,
+.help-card {
+    border-radius: 8px;
+    background: rgba(244, 239, 227, 0.055);
+    border-color: rgba(244, 239, 227, 0.12);
+}
+
+.player-avatar {
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(216, 183, 106, 0.22), rgba(112, 167, 183, 0.12));
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-green), var(--accent-blue));
+}
+
+.night-panel {
+    animation: none;
+    background: linear-gradient(180deg, rgba(79, 111, 82, 0.17), rgba(17, 20, 15, 0.84));
+}
+
+.night-sequence {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+}
+
+.night-step {
+    border-radius: 8px;
+    flex: 0 0 36px;
+}
+
+.night-step-connector {
+    flex: 0 0 14px;
+}
+
+.vote-grid,
+.night-action-targets {
+    grid-template-columns: 1fr;
+}
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.modal {
+    background: rgba(23, 28, 23, 0.98);
+}
+
+.toast {
+    border-radius: 8px;
+    background: rgba(23, 28, 23, 0.96);
+}
+
+.fullscreen-transition.night-bg,
+.fullscreen-transition.day-bg {
+    background: rgba(17, 20, 15, 0.98);
+}
+
+.transition-text {
+    font-family: Inter, system-ui, sans-serif;
+    letter-spacing: 0.08em;
+}
+
+@media (min-width: 620px) {
+    .mode-gateway {
+        padding-inline: 28px;
+    }
+
+    .mode-choice-grid,
+    .online-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .player-grid,
+    .role-grid,
+    .help-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vote-grid,
+    .night-action-targets {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 860px) {
+    .mode-gateway {
+        display: grid;
+        width: min(1180px, 100%);
+        max-width: none;
+        grid-template-columns: minmax(330px, 0.95fr) minmax(430px, 1fr);
+        align-items: center;
+        gap: clamp(24px, 4vw, 64px);
+        padding-inline: clamp(32px, 4vw, 48px);
+    }
+
+    .mode-title {
+        font-size: clamp(3.6rem, 5.6vw, 6.1rem);
+    }
+
+    .mode-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .mode-choice-card {
+        min-height: 170px;
+        padding: 24px;
+    }
+
+    .mode-moderator #tab-dashboard.tab-content.active {
+        display: grid;
+        grid-template-columns: 0.86fr 1.14fr;
+        align-content: center;
+        gap: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .role-panel {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+}
+
+@media (max-width: 380px) {
+    .mode-gateway,
+    .player-app {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .mode-title {
+        font-size: clamp(2.35rem, 13.2vw, 3.05rem);
+    }
+
+    .quick-action-btn {
+        min-height: 106px;
+        padding: 12px;
+        font-size: 0.78rem;
+    }
+
+    .bottom-nav-item span:last-child {
+        font-size: 0.62rem;
+    }
+}
