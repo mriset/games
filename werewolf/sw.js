@@ -1,4 +1,4 @@
-const WEREWOLF_CACHE = 'werewolf-game-manager-v6';
+const WEREWOLF_CACHE = 'werewolf-game-manager-v7';
 const LOCAL_ASSETS = [
   './',
   './index.html',

@@ -24,6 +24,7 @@
  delete gameState._onlineVoteLockedDay;
  gameState.nightPhase = 0;
  gameState.votes = {};
+ gameState.onlineManualVotes = {};
  gameState.wolfTeam = gameState.players.filter(p => {
  const def = p.role ? ROLE_DEFINITIONS[p.role] : null;
  return def && def.team === 'Werewolf';
@@ -147,6 +148,7 @@ function executeNextPhase() {
  gameState.nightState = createInitialNightState();
  delete gameState._onlineVoteOpenedDay;
  delete gameState._onlineVoteLockedDay;
+ if (gameState.onlineManualVotes) delete gameState.onlineManualVotes[gameState.day];
  // UI-05 FIX: Increment day SEBELUM showPhaseTransition agar overlay
  // menampilkan nomor malam yang benar (bukan nomor lama).
  gameState.day++;
@@ -162,6 +164,7 @@ function executeNextPhase() {
  gameState.votes = {};
  delete gameState._onlineVoteOpenedDay;
  delete gameState._onlineVoteLockedDay;
+ if (gameState.onlineManualVotes) delete gameState.onlineManualVotes[gameState.day];
  gameState._lastDayExecuted = null;
  showPhaseTransition('day');
  addLog('day', ` Hari ke-${gameState.day} dimulai.`);
@@ -2634,15 +2637,15 @@ function processNightDeaths() {
  // UI-07 FIX: Gunakan array.reduce daripada Math.max(...array) untuk menghindari call stack size limit
  const maxEligibleVote = eligibleVotes.length > 0 ? eligibleVotes.reduce((max, curr) => Math.max(max, curr), 0) : 0;
  const isLeading = voteCount > 0 && voteCount === maxEligibleVote;
- const voteAttrs = isOnlineVote || pauseLocked
- ? `disabled title="${pauseLocked ? 'Game sedang dijeda' : 'Vote online dipilih dari HP pemain'}"`
- : `onclick="tapVote('${p.id}', '${escapeJsString(p.name)}')" oncontextmenu="untapVote(event,'${escapeJsString(p.name)}')"`;
+ const voteAttrs = pauseLocked
+ ? `disabled title="Game sedang dijeda"`
+ : `onclick="handleVoteClick(event,'${escapeJsString(p.id)}','${escapeJsString(p.name)}')" onpointerdown="startVoteLongPress(event,'${escapeJsString(p.id)}','${escapeJsString(p.name)}')" onpointerup="endVoteLongPress()" onpointercancel="endVoteLongPress()" onpointerleave="endVoteLongPress()" oncontextmenu="untapVote(event,'${escapeJsString(p.id)}','${escapeJsString(p.name)}')" title="${isOnlineVote ? 'Klik untuk tambah vote manual moderator. Klik kanan untuk kurangi. Di HP tahan 1 detik untuk hapus semua vote target ini.' : 'Klik untuk tambah vote. Klik kanan untuk kurangi. Di HP tahan 1 detik untuk hapus semua vote target ini.'}"`;
  return `
 <div style="display:flex;align-items:center;justify-content:center;">
 <button class="vote-btn${voteCount > 0 ? ' selected' : ''}" 
  ${voteAttrs}
  data-id="${p.id}" 
- style="width:100%;position:relative;${(isOnlineVote || pauseLocked) ? 'cursor:default;' : ''}${p.role === 'Mayor' && p._mayorRevealed ? 'border-color:var(--accent-gold);' : ''}${isLeading && voteCount > 0 ? 'border-color:var(--accent-red);box-shadow:0 0 10px rgba(239,68,68,0.4);' : ''}">
+ style="width:100%;position:relative;${pauseLocked ? 'cursor:default;' : ''}${p.role === 'Mayor' && p._mayorRevealed ? 'border-color:var(--accent-gold);' : ''}${isLeading && voteCount > 0 ? 'border-color:var(--accent-red);box-shadow:0 0 10px rgba(239,68,68,0.4);' : ''}">
  ${escapeHtml(p.name)}
  ${voteCount > 0 ? `<span style="position:absolute;top:4px;right:6px;background:var(--accent-red);color:#fff;border-radius:50%;width:20px;height:20px;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;">${voteCount}</span>` : ''}
 </button>
@@ -2669,8 +2672,47 @@ function processNightDeaths() {
  }
 
 
+ let voteLongPressTimer = null;
+ let voteLongPressSuppressUntil = 0;
+
+ function startVoteLongPress(event, id, name) {
+ if (isGameplayPaused(false)) return;
+ if (event?.pointerType === 'mouse') return;
+ endVoteLongPress();
+ if (event?.currentTarget?.setPointerCapture && event.pointerId !== undefined) {
+ try {
+ event.currentTarget.setPointerCapture(event.pointerId);
+ } catch (err) {
+ // Pointer capture can fail on older mobile browsers; the timer still works.
+ }
+ }
+ voteLongPressTimer = setTimeout(() => {
+ voteLongPressSuppressUntil = Date.now() + 800;
+ clearVotesForTarget(id, name);
+ }, 1000);
+ }
+
+ function endVoteLongPress() {
+ if (voteLongPressTimer) {
+ clearTimeout(voteLongPressTimer);
+ voteLongPressTimer = null;
+ }
+ }
+
+ function handleVoteClick(event, id, name) {
+ if (Date.now() < voteLongPressSuppressUntil) {
+ event?.preventDefault?.();
+ return;
+ }
+ tapVote(id, name);
+ }
+
  function tapVote(id, name) {
  if (isGameplayPaused()) return;
+ if (onlineRoomCode && gameState.started && gameState.phase === 'day') {
+ adjustOnlineManualVote(id, 1);
+ return;
+ }
  if (!gameState.votes[name]) gameState.votes[name] = 0;
  gameState.votes[name]++;
  renderVoteGrid();
@@ -2678,12 +2720,99 @@ function processNightDeaths() {
  saveState();
  }
 
- function untapVote(event, name) {
+ function clearVotesForTarget(id, name) {
+ if (isGameplayPaused()) return;
+ if (onlineRoomCode && gameState.started && gameState.phase === 'day') {
+ clearOnlineVotesForTarget(id, name);
+ return;
+ }
+ if (!gameState.votes[name] || gameState.votes[name] <= 0) return;
+ delete gameState.votes[name];
+ renderVoteGrid();
+ renderVoteResults();
+ saveState();
+ showToast(`Semua vote untuk ${name} dihapus.`, 'info');
+ }
+
+ function untapVote(event, id, name) {
  event.preventDefault();
  if (isGameplayPaused()) return;
+ if (onlineRoomCode && gameState.started && gameState.phase === 'day') {
+ adjustOnlineManualVote(id, -1);
+ return;
+ }
  if (!gameState.votes[name] || gameState.votes[name] <= 0) return;
  gameState.votes[name]--;
  if (gameState.votes[name] <= 0) delete gameState.votes[name];
+ renderVoteGrid();
+ renderVoteResults();
+ saveState();
+ }
+
+ function clearOnlineVotesForTarget(targetId, name) {
+ if (!targetId) return;
+ const dayKey = String(gameState.day);
+ let changed = false;
+
+ if (gameState.onlineManualVotes?.[dayKey]?.[targetId]) {
+ delete gameState.onlineManualVotes[dayKey][targetId];
+ if (Object.keys(gameState.onlineManualVotes[dayKey]).length === 0) delete gameState.onlineManualVotes[dayKey];
+ changed = true;
+ }
+
+ const dayVotes = onlineVotesCache?.[dayKey] || {};
+ const removals = [];
+ Object.entries(dayVotes).forEach(([voterId, ballot]) => {
+ if (String(ballot?.targetId) === String(targetId)) {
+ delete dayVotes[voterId];
+ removals.push(String(voterId));
+ changed = true;
+ }
+ });
+
+ const finish = () => {
+ if (typeof buildOnlineVoteSnapshot === 'function') {
+ const snapshot = buildOnlineVoteSnapshot();
+ gameState.votes = snapshot.tally;
+ if (typeof pushVoteSummaryToFirebase === 'function') pushVoteSummaryToFirebase(snapshot);
+ }
+ renderVoteGrid();
+ renderVoteResults();
+ saveState();
+ if (changed) showToast(`Semua vote untuk ${name} dihapus.`, 'info');
+ };
+
+ if (removals.length && typeof db !== 'undefined' && onlineRoomCode) {
+ Promise.all(removals.map(voterId => db.ref(`rooms/${onlineRoomCode}/votes/${dayKey}/${voterId}`).remove()))
+ .catch(err => showToast('Gagal menghapus sebagian vote online: ' + err.message, 'error'))
+ .finally(finish);
+ return;
+ }
+
+ finish();
+ }
+
+ function adjustOnlineManualVote(targetId, delta) {
+ if (!targetId) return;
+ if (!gameState.onlineManualVotes) gameState.onlineManualVotes = {};
+ const dayKey = String(gameState.day);
+ if (!gameState.onlineManualVotes[dayKey]) gameState.onlineManualVotes[dayKey] = {};
+ const bucket = gameState.onlineManualVotes[dayKey];
+ const current = Number(bucket[targetId]) || 0;
+ const next = Math.max(0, current + delta);
+
+ if (next > 0) {
+ bucket[targetId] = next;
+ } else {
+ delete bucket[targetId];
+ }
+ if (Object.keys(bucket).length === 0) delete gameState.onlineManualVotes[dayKey];
+
+ if (typeof buildOnlineVoteSnapshot === 'function') {
+ const snapshot = buildOnlineVoteSnapshot();
+ gameState.votes = snapshot.tally;
+ if (typeof pushVoteSummaryToFirebase === 'function') pushVoteSummaryToFirebase(snapshot);
+ }
  renderVoteGrid();
  renderVoteResults();
  saveState();
@@ -2735,6 +2864,17 @@ function processNightDeaths() {
  <span style="color:var(--text-secondary);">pilih <strong style="color:var(--accent-gold);">${escapeHtml(v.targetName)}</strong>${v.weight > 1 ? ` (${v.weight} suara)` : ''}</span>
 </div>`).join('')
  : '<div style="font-size:0.82rem;color:var(--text-muted);">Belum ada pemain yang vote.</div>';
+ const manualHtml = snapshot.manualBallots?.length
+ ? `
+ <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">Vote manual moderator:</div>
+ <div style="display:grid;gap:8px;margin-top:6px;">
+ ${snapshot.manualBallots.map(v => `
+ <div class="vote-result-item">
+  <span>${escapeHtml(v.targetName)}</span>
+  <span style="color:var(--accent-gold);font-weight:700;">+${v.count} vote</span>
+ </div>`).join('')}
+ </div>`
+ : '';
  const missingHtml = snapshot.missing.length
  ? snapshot.missing.map(p => `<span style="display:inline-block;margin:4px 6px 0 0;padding:4px 8px;border-radius:999px;background:rgba(239,68,68,0.1);color:var(--accent-red);font-size:0.78rem;">${escapeHtml(p.name)}</span>`).join('')
  : '<span style="color:var(--accent-green);font-weight:700;">Semua pemain aktif sudah vote.</span>';
@@ -2747,6 +2887,7 @@ function processNightDeaths() {
  </div>
  ${onlineVoteOpen ? '' : '<div style="margin-bottom:10px;font-size:0.82rem;color:var(--text-muted);">Pemain belum bisa voting. Tekan <strong style="color:var(--accent-gold);">Mulai Voting</strong> saat diskusi selesai.</div>'}
  <div style="display:grid;gap:8px;">${ballotsHtml}</div>
+ ${manualHtml}
  <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">Belum vote:</div>
  <div>${missingHtml}</div>
 </div>`;
@@ -2755,6 +2896,7 @@ function processNightDeaths() {
  function resetVotes() {
  if (isGameplayPaused()) return;
  gameState.votes = {};
+ if (gameState.onlineManualVotes) delete gameState.onlineManualVotes[gameState.day];
  if (typeof clearOnlineVotesForCurrentDay === 'function') {
  clearOnlineVotesForCurrentDay();
  }

@@ -265,8 +265,12 @@ function initPlayerListeners() {
  const meta = snapshot.val();
  playerCurrentMeta = meta;
  if (!meta) {
- playerToast('Room ditutup oleh moderator.', 'warning');
- showPlayerScreen('screen-login');
+ handlePlayerRemovedFromRoom('Room ditutup oleh moderator.');
+ return;
+ }
+
+ if (meta.closed) {
+ handlePlayerRemovedFromRoom('Room ditutup oleh moderator.');
  return;
  }
 
@@ -462,12 +466,13 @@ function schedulePlayerMissingCheck() {
  }, 1200);
 }
 
-function handlePlayerRemovedFromRoom() {
+function handlePlayerRemovedFromRoom(message = 'Kamu dikeluarkan dari room oleh moderator.') {
  detachPlayerListeners();
  clearInterval(playerTimerInterval);
  playerTimerInterval = null;
  playerIsDead = false;
  myRoleData = null;
+ playerRoomCode = '';
  localStorage.removeItem(PLAYER_SESSION_KEY);
 
  const statusBadge = document.getElementById('playerStatusBadge');
@@ -482,7 +487,7 @@ function handlePlayerRemovedFromRoom() {
  if (votePanel) votePanel.style.display = 'none';
  updatePlayerRoleCard(null);
  showPlayerScreen('screen-login');
- playerToast('Kamu dikeluarkan dari room oleh moderator.', 'warning');
+ playerToast(message, 'warning');
 }
 
 function renderPlayerVotePanel() {
@@ -545,13 +550,9 @@ function renderPlayerVotePanel() {
  return;
  }
 
- const summaryText = voteSummary
- ? ` ${Number(voteSummary.votedCount) || 0}/${Number(voteSummary.totalVoters) || 0} vote masuk${voteSummary.leaderName ? `, sementara: ${voteSummary.leaderName}` : ''}.`
- : '';
-
- status.textContent = (targetId
+ status.textContent = targetId
  ? `Vote kamu: ${playerCurrentPlayers[targetId]?.name || myVote.targetName || 'target terpilih'}`
- : 'Pilih satu pemain untuk voting pengusiran.') + summaryText;
+ : 'Pilih satu pemain untuk voting pengusiran.';
 
  options.innerHTML = players.map(player => {
  const selected = String(player.id) === targetId;
@@ -583,21 +584,19 @@ function renderPlayerVoteReveal(result) {
  }
 
  const leaders = Array.isArray(result.leaders) ? result.leaders : [];
- const leaderText = leaders.length > 1
- ? `Seri terbanyak: ${leaders.map(r => r.name).join(', ')}`
- : `Voting terbanyak: ${leaders[0]?.name || result.results[0].name}`;
+ const topResult = leaders[0] || result.results[0];
+ const leaderText = `Voting terbanyak: ${topResult.name}`;
 
  reveal.style.display = 'block';
  reveal.innerHTML = `
 <div style="padding:10px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:rgba(245,158,11,0.08);">
  <div style="font-size:0.82rem;color:var(--accent-gold);font-weight:800;margin-bottom:8px;">${escapePlayerHtml(leaderText)}</div>
  <div style="display:grid;gap:6px;">
- ${result.results.map(row => `
  <div class="player-vote-option" style="min-height:38px;padding:8px 10px;cursor:default;">
- <span>${escapePlayerHtml(row.name)}</span>
- <span>${Number(row.count) || 0} vote</span>
- </div>`).join('')}
+ <span>${escapePlayerHtml(topResult.name)}</span>
+ <span>${Number(topResult.count) || 0} vote</span>
  </div>
+</div>
 </div>`;
 }
 

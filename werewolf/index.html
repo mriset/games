@@ -397,7 +397,7 @@
                     Mulai Ulang
                 </button>
                 <button class="quick-action-btn quick-action-danger"
-                    onclick="showConfirm('Hapus Sesi Tersimpan', 'Ini akan menghapus semua data yang tersimpan di browser. Game otomatis direset.', 'Hapus Sesi', true, () => { clearSavedState(); location.reload(); })">
+                    onclick="showConfirm('Hapus Sesi Tersimpan', 'Ini akan menghapus semua data yang tersimpan di browser. Room online aktif akan otomatis ditutup dan semua pemain dikeluarkan.', 'Hapus Sesi', true, () => { deleteSavedSessionAndReload(); })">
                     <span class="qa-icon"><i data-lucide="trash-2"></i></span>
                     Hapus Sesi
                 </button>

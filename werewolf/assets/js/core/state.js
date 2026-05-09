@@ -56,6 +56,7 @@
             players: [],
             roles: {},
             votes: {},
+            onlineManualVotes: {},
             wolfTeam: [],
             couples: [],
             witchPotions: { heal: true, poison: true },
@@ -363,34 +364,60 @@
             );
         }
 
+        function stopOnlineRoomListeners() {
+            if (roomPlayersRef) roomPlayersRef.off();
+            if (roomMetaRef) roomMetaRef.off();
+            if (timerRef) timerRef.off();
+            if (roomVotesRef) roomVotesRef.off();
+        }
+
+        function resetOnlineRoomUi() {
+            const onlineModeSetup = document.getElementById('onlineModeSetup');
+            const onlineModeActive = document.getElementById('onlineModeActive');
+            if (onlineModeSetup) onlineModeSetup.style.display = 'block';
+            if (onlineModeActive) onlineModeActive.style.display = 'none';
+        }
+
+        async function closeOnlineRoomData() {
+            const codeToRemove = onlineRoomCode || localStorage.getItem('werewolf_online_room');
+
+            if (!db || !codeToRemove) return;
+
+            try {
+                const roomRef = db.ref(`rooms/${codeToRemove}`);
+                await roomRef.child('meta').update({
+                    closed: true,
+                    closedReason: 'moderator_deleted_session',
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                await roomRef.remove();
+                console.log("Room deleted from Firebase");
+            } catch (err) {
+                console.error("Error deleting room:", err);
+                throw err;
+            }
+
+            stopOnlineRoomListeners();
+            onlineRoomCode = null;
+            roomPlayersRef = null;
+            roomMetaRef = null;
+            timerRef = null;
+            roomVotesRef = null;
+            onlineVotesCache = {};
+            localStorage.removeItem('werewolf_online_room');
+        }
+
         function disconnectRoom() {
             if (!onlineRoomCode) return;
 
-            showConfirm('Tutup Room', 'Tutup room online dan hapus semua data dari database?', 'Tutup & Hapus', true, () => {
-                const codeToRemove = onlineRoomCode;
-                
-                // Remove from Firebase
-                db.ref(`rooms/${codeToRemove}`).remove().then(() => {
-                    console.log("Room deleted from Firebase");
-                }).catch(err => {
-                    console.error("Error deleting room:", err);
-                });
-
-                // Stop listening
-                if (roomPlayersRef) roomPlayersRef.off();
-                if (roomMetaRef) roomMetaRef.off();
-                if (timerRef) timerRef.off();
-                if (roomVotesRef) roomVotesRef.off();
-
-                onlineRoomCode = null;
-                roomVotesRef = null;
-                onlineVotesCache = {};
-                localStorage.removeItem('werewolf_online_room');
-                
-                // Update UI
-                document.getElementById('onlineModeSetup').style.display = 'block';
-                document.getElementById('onlineModeActive').style.display = 'none';
-                showToast('Room telah ditutup dan dihapus.', 'info');
+            showConfirm('Tutup Room', 'Tutup room online dan hapus semua data dari database?', 'Tutup & Hapus', true, async () => {
+                try {
+                    await closeOnlineRoomData();
+                    resetOnlineRoomUi();
+                    showToast('Room telah ditutup dan dihapus.', 'info');
+                } catch (err) {
+                    showToast('Gagal menutup room: ' + err.message, 'error');
+                }
             });
         }
 
@@ -466,6 +493,18 @@
             localStorage.removeItem('werewolf_online_room');
         }
 
+        async function deleteSavedSessionAndReload() {
+            try {
+                await closeOnlineRoomData();
+            } catch (err) {
+                console.error('Failed closing online room while deleting session:', err);
+                showToast('Sesi lokal dihapus, tapi room online gagal ditutup: ' + err.message, 'warning');
+            } finally {
+                clearSavedState();
+                location.reload();
+            }
+        }
+
         function applyOnlineVotes(votesByDay) {
             if (!onlineRoomCode || !gameState.started || gameState.phase !== 'day') return;
 
@@ -481,8 +520,10 @@
             const eligiblePlayers = gameState.players.filter(p => p.alive && !p._idiotRevealed);
             const eligibleIds = new Set(eligiblePlayers.map(p => String(p.id)));
             const playerById = new Map(gameState.players.map(p => [String(p.id), p]));
+            const manualVotes = gameState.onlineManualVotes?.[gameState.day] || {};
             const tally = {};
             const ballots = [];
+            const manualBallots = [];
             const votedIds = new Set();
 
             Object.entries(dayVotes).forEach(([voterId, ballot]) => {
@@ -505,6 +546,20 @@
                 });
             });
 
+            Object.entries(manualVotes).forEach(([targetId, rawCount]) => {
+                const target = playerById.get(String(targetId));
+                const count = Number(rawCount) || 0;
+                if (!target || count <= 0) return;
+                if (!eligibleIds.has(String(target.id))) return;
+
+                tally[target.name] = (tally[target.name] || 0) + count;
+                manualBallots.push({
+                    targetId: String(target.id),
+                    targetName: target.name,
+                    count
+                });
+            });
+
             const missing = eligiblePlayers
                 .filter(p => !votedIds.has(String(p.id)))
                 .map(p => ({ id: String(p.id), name: p.name }));
@@ -518,6 +573,7 @@
                 day: gameState.day,
                 tally,
                 ballots,
+                manualBallots,
                 missing,
                 results,
                 maxVotes,
@@ -614,6 +670,9 @@
             if (!db || !onlineRoomCode) return;
             if (onlineVotesCache && onlineVotesCache[gameState.day]) {
                 delete onlineVotesCache[gameState.day];
+            }
+            if (gameState.onlineManualVotes) {
+                delete gameState.onlineManualVotes[gameState.day];
             }
             db.ref(`rooms/${onlineRoomCode}/votes/${gameState.day}`).remove().catch(err => {
                 console.error('Firebase vote reset error:', err);

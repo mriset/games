@@ -1165,19 +1165,32 @@ textarea.form-input:focus {
 
 @media (min-width: 860px) {
     .tactical-gateway {
-        grid-template-columns: minmax(290px, 0.8fr) minmax(480px, 1.2fr);
-        align-items: center;
-        gap: clamp(28px, 6vw, 76px);
-        padding-inline: clamp(28px, 5vw, 58px);
+        grid-template-columns: 1fr;
+        width: min(720px, calc(100% - 32px));
+        padding-inline: 0;
     }
 
     .mode-title {
-        font-size: clamp(4.8rem, 7.4vw, 7.6rem);
+        font-size: clamp(4.2rem, 10vw, 5.5rem);
     }
 
     .player-game-grid {
         grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
         align-items: start;
+    }
+}
+
+@media (min-width: 1080px) {
+    .tactical-gateway {
+        width: min(100%, 1280px);
+        grid-template-columns: minmax(0, 1.08fr) minmax(480px, 0.92fr);
+        align-items: center;
+        gap: clamp(28px, 4.5vw, 58px);
+        padding-inline: clamp(28px, 5vw, 64px);
+    }
+
+    .mode-title {
+        font-size: clamp(4.8rem, 6vw, 6.9rem);
     }
 }
 
