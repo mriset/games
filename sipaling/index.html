@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Si Paling... - Multiplayer Online</title>
+    <meta name="description"
+        content="Si Paling Party Game versi Multiplayer Online. Main bareng teman, vote siapa yang paling...!">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Fredoka+One&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="assets/js/tailwind.config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+
+<body class="selection:bg-yellow-400 selection:text-black">
+
+    <div id="app-container">
+
+        <!-- =========================================================== -->
+        <!--                        HOME SCREEN                          -->
+        <!-- =========================================================== -->
+        <div id="home-screen" class="screen active-screen pop-pattern">
+            <!-- Decorative -->
+            <div
+                style="position:absolute;top:24px;left:18px;font-size:52px;opacity:0.1;pointer-events:none;transform:rotate(-15deg);">
+                🗯️</div>
+            <div
+                style="position:absolute;bottom:60px;right:14px;font-size:58px;opacity:0.1;pointer-events:none;transform:rotate(14deg);">
+                💥</div>
+
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center;"
+                class="animate-slide-up">
+
+                <!-- Logo Box -->
+                <div
+                    style="background:white;padding:24px 20px 18px;border-radius:16px;border:4px solid #1A1A1A;box-shadow:6px 6px 0 #1A1A1A;width:226px;margin:0 auto 18px;transform:rotate(-3deg);position:relative;">
+                    <span
+                        style="position:absolute;top:8px;left:10px;color:#FFB800;font-size:20px;-webkit-text-stroke:2px #1A1A1A;line-height:1;">✦</span>
+                    <span
+                        style="position:absolute;bottom:8px;right:10px;color:#FFB800;font-size:20px;-webkit-text-stroke:2px #1A1A1A;line-height:1;">✦</span>
+                    <h1
+                        style="font-family:'Fredoka One',cursive;font-size:50px;color:#1A1A1A;line-height:0.9;margin-bottom:10px;text-shadow:4px 4px 0 #FFB800;">
+                        SI<br>PALING</h1>
+                    <div
+                        style="background:#FFB800;color:white;font-size:8px;font-weight:900;padding:4px 14px;border-radius:999px;border:2px solid #1A1A1A;box-shadow:2px 2px 0 #1A1A1A;display:inline-block;margin-bottom:10px;letter-spacing:2px;">
+                        MULTIPLAYER ONLINE</div>
+                    <div><i class="fa-solid fa-hand-pointer"
+                            style="font-size:36px;color:#FFB800;-webkit-text-stroke:2px #1A1A1A;"></i></div>
+                </div>
+
+                <!-- Form -->
+                <div style="width:100%;max-width:292px;">
+                    <input type="text" id="player-name" placeholder="Nama (huruf saja, max 12)" maxlength="12"
+                        pattern="[A-Za-z]+" autocomplete="off">
+
+                    <button class="pop-btn" onclick="createRoom()"
+                        style="width:100%;background:#FFB800;color:#1A1A1A;padding:15px;border-radius:12px;font-size:0.92rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <i class="fa-solid fa-plus"></i> Buat Room
+                    </button>
+
+                    <div class="divider">— ATAU GABUNG —</div>
+
+                    <input type="text" id="room-code-input" placeholder="KODE ROOM (4 HURUF)" maxlength="4"
+                        style="text-transform:uppercase;" autocomplete="off">
+
+                    <button class="pop-btn" onclick="joinRoom()"
+                        style="width:100%;background:white;color:#1A1A1A;padding:15px;border-radius:12px;font-size:0.92rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Gabung Room
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align:center;color:#94A3B8;font-size:0.65rem;font-weight:900;letter-spacing:1px;padding-bottom:18px;text-transform:uppercase;">
+                7 Level • 350+ Kartu • Max 25 Pemain
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                      EMOJI OVERLAY                          -->
+        <!-- =========================================================== -->
+        <div id="emoji-overlay" class="screen" style="z-index:980;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+            <div style="background:white;width:90%;max-width:320px;border-radius:24px;border:4px solid #1A1A1A;box-shadow:6px 6px 0 #1A1A1A;padding:20px;text-align:center;transform:translateY(20px);animation:slideUp 0.3s ease forwards;">
+                <h3 style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:#1A1A1A;margin-bottom:6px;">Pilih Avatarmu</h3>
+                <p style="font-size:0.8rem;font-weight:700;color:#64748B;margin-bottom:16px;">Biar gampang dikenali pas ngevote!</p>
+                <div class="emoji-grid" id="emoji-grid">
+                    <!-- JS generated emojis -->
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="pop-btn" onclick="closeEmojiPicker()" style="flex:1;background:#FEE2E2;color:#DC2626;border:3px solid #EF4444;padding:12px;border-radius:12px;font-size:0.85rem;font-weight:900;box-shadow:3px 3px 0 #EF4444;">Batal</button>
+                    <button class="pop-btn" id="btn-confirm-emoji" onclick="confirmEmojiSelection()" style="flex:2;background:#FFB800;color:#1A1A1A;padding:12px;border-radius:12px;font-size:0.85rem;font-weight:900;">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                        LOBBY SCREEN                         -->
+        <!-- =========================================================== -->
+        <div id="lobby-screen" class="screen pop-pattern">
+            <div style="flex:1;display:flex;flex-direction:column;padding:20px;overflow:hidden;">
+
+                <div style="display:flex;justify-content:center;padding-top:8px;margin-bottom:14px;">
+                    <div class="counter-badge">LOBBY</div>
+                </div>
+
+                <div
+                    style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;">
+                    <p
+                        style="color:#64748B;font-weight:800;letter-spacing:2px;font-size:0.7rem;text-transform:uppercase;">
+                        KODE ROOM</p>
+                    <h2 id="lobby-room-code" onclick="copyInviteLink()"
+                        style="font-family:'Fredoka One',cursive;font-size:4.2rem;color:#FFB800;-webkit-text-stroke:2px #1A1A1A;text-shadow:5px 5px 0 #1A1A1A;letter-spacing:6px;margin:6px 0 0; cursor:pointer;"
+                        title="Klik untuk menyalin link invite">----</h2>
+                    <p style="font-size:0.75rem;color:#94A3B8;font-style:italic;margin-top:4px;margin-bottom:16px;">
+                        (Klik kode di atas untuk menyalin link invite)</p>
+
+                    <p style="font-weight:800;font-size:0.88rem;color:#1A1A1A;margin-bottom:2px;">
+                        Daftar Pemain: <span id="player-count"
+                            style="color:#FFB800;-webkit-text-stroke:0.5px #1A1A1A;">0</span>
+                    </p>
+
+                    <div class="player-list" id="player-list"></div>
+
+                    <p id="lobby-waiting-msg"
+                        style="display:none;margin-top:16px;font-size:0.82rem;font-weight:700;color:#64748B;">
+                        ⏳ Menunggu Moderator memulai...
+                    </p>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <div id="mod-lobby-controls" style="display:none;flex-direction:column;gap:10px;">
+                    <button class="pop-btn" id="btn-start-game" onclick="goToEdition()" disabled
+                        style="width:100%;background:#FFB800;color:#1A1A1A;padding:15px;border-radius:12px;font-size:0.92rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <i class="ph-bold ph-play"></i> Menunggu (Min. 3 Pemain)
+                    </button>
+                </div>
+                <button class="pop-btn" onclick="confirmLeave()"
+                    style="width:100%;background:#FEE2E2;border:3px solid #EF4444;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:900;color:#DC2626;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #EF4444;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar Room
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                       EDITION SCREEN                        -->
+        <!-- =========================================================== -->
+        <div id="edition-screen" class="screen pop-pattern">
+            <div style="flex:1;display:flex;flex-direction:column;padding:18px;overflow:hidden;">
+
+                <div style="display:flex;align-items:center;padding-top:8px;margin-bottom:14px;gap:10px;">
+                    <div class="counter-badge"><span id="edition-room-badge">ROOM: ----</span></div>
+                    <h2
+                        style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:#1A1A1A;text-transform:uppercase;letter-spacing:1px;">
+                        Pilih Edisi</h2>
+                </div>
+
+                <div style="flex:1;overflow-y:auto;">
+                    <div id="online-edition-list"
+                        style="display:flex;flex-direction:column;gap:10px;padding-bottom:10px;">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="pop-btn" onclick="confirmLeave()"
+                    style="width:100%;background:#FEE2E2;border:3px solid #EF4444;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:900;color:#DC2626;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #EF4444;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar Room
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                      CATEGORY SCREEN                        -->
+        <!-- =========================================================== -->
+        <div id="category-screen" class="screen pop-pattern">
+            <div style="flex:1;display:flex;flex-direction:column;padding:18px;overflow:hidden;">
+
+                <div style="display:flex;align-items:center;padding-top:8px;margin-bottom:14px;gap:10px;">
+                    <div class="counter-badge"><span id="cat-room-badge">ROOM: ----</span></div>
+                    <h2
+                        id="category-screen-title"
+                        style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:#1A1A1A;text-transform:uppercase;letter-spacing:1px;">
+                        Pilih Kategori</h2>
+                </div>
+
+                <div style="flex:1;overflow-y:auto;">
+                    <div id="online-category-list"
+                        style="display:flex;flex-direction:column;gap:10px;padding-bottom:10px;">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <div style="display:flex;gap:8px;">
+                    <button class="pop-btn" onclick="backToEdition()"
+                        style="flex:1;background:white;border:3px solid #1A1A1A;padding:14px;border-radius:12px;font-size:0.82rem;font-weight:900;color:#1A1A1A;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #1A1A1A;">
+                        <i class="fa-solid fa-arrow-left"></i> Ganti Edisi
+                    </button>
+                    <button class="pop-btn" onclick="confirmLeave()"
+                        style="flex:1;background:#FEE2E2;border:3px solid #EF4444;padding:14px;border-radius:12px;font-size:0.82rem;font-weight:900;color:#DC2626;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #EF4444;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                       PLAY SCREEN                           -->
+        <!-- =========================================================== -->
+        <div id="play-screen" class="screen pop-pattern">
+
+            <!-- Top Bar -->
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px 0;">
+                <button class="pop-btn" onclick="confirmLeave()" title="Keluar Room"
+                    style="background:#FEE2E2;border:2px solid #EF4444;color:#DC2626;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:3px 3px 0 #EF4444;flex-shrink:0;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+                <div class="counter-badge" id="play-room-badge" onclick="handleRoomBadgeTap()" style="cursor:pointer; user-select:none;">ROOM: ----</div>
+                <button class="pop-btn" id="btn-back-to-category" onclick="backToCategory()" title="Ganti Kategori"
+                    style="display:none;background:#E0F2FE;border:2px solid #0369A1;color:#0369A1;width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;font-size:1rem;box-shadow:3px 3px 0 #0369A1;flex-shrink:0;">
+                    <i class="ph-bold ph-squares-four"></i>
+                </button>
+            </div>
+
+            <!-- Card Area -->
+            <div id="sp-card-area"
+                style="flex:1;display:flex;align-items:center;justify-content:center;padding:12px;position:relative; transition: all 0.4s ease;">
+                <div id="sp-card" class="sp-card">
+                    <div class="sp-card-header" id="sp-card-header" style="background:#10b981;">
+                        <div class="sp-card-edition" id="sp-card-edition">EDISI KLASIK</div>
+                        <div class="sp-card-lvl" id="sp-card-lvl">LEVEL 1: PEMANASAN</div>
+                    </div>
+                    <div class="sp-card-body">
+                        <div class="sp-card-icon" id="sp-card-icon" style="color:#10b981;"><i
+                                class="ph-fill ph-fire"></i></div>
+                        <div class="sp-card-label">Siapa di antara kita yang...</div>
+                        <p class="sp-card-text" id="sp-card-text">Pilih kategori untuk mulai!</p>
+                    </div>
+                    <div class="sp-card-footer">
+                        <span>SI PALING...</span>
+                        <span id="sp-card-room">ONLINE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nav Controls -->
+            <div class="nav-controls">
+                <!-- Moderator controls -->
+                <div id="mod-play-controls" style="display:none;flex-direction:column;gap:10px;">
+                    <div class="row-btns">
+                        <button class="pop-btn" id="btn-acak" onclick="triggerShuffle()"
+                            style="flex:1;background:#FFB800;color:#1A1A1A;padding:15px;border-radius:12px;font-size:0.92rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;">
+                            <i class="ph-bold ph-cards"></i> Acak!
+                        </button>
+                        <button class="pop-btn" id="btn-custom" onclick="toggleCustomOverlay()"
+                            style="flex:1;background:#C7D2FE;color:#1A1A1A;padding:15px;border-radius:12px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px;">
+                            <i class="ph-bold ph-pencil-simple"></i> Tulis
+                        </button>
+                        <button class="pop-btn" id="btn-show-players" onclick="togglePlayersOverlay()"
+                            style="background:white;color:#1A1A1A;padding:14px;border-radius:12px;font-size:1.1rem;font-weight:900;align-items:center;justify-content:center;box-shadow:4px 4px 0 #1A1A1A;flex-shrink:0;min-width:50px;width:50px;" title="Pemain">
+                            <i class="ph-bold ph-users"></i>
+                        </button>
+                    </div>
+                    <div class="row-btns">
+                        <button class="pop-btn" id="btn-start-vote" onclick="startVote()"
+                            style="display:none;flex:1;background:white;color:#1A1A1A;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;align-items:center;justify-content:center;gap:8px;">
+                            <i class="ph-bold ph-hand-pointing"></i> Mulai Vote
+                        </button>
+                        <button class="pop-btn" id="btn-leaderboard-mod" onclick="toggleLeaderboard()"
+                            style="display:none;background:#1A1A1A;color:#FFB800;padding:14px;border-radius:12px;font-size:1.1rem;font-weight:900;align-items:center;justify-content:center;box-shadow:4px 4px 0 #FFB800;flex-shrink:0;min-width:50px;width:50px;" title="Papan Skor">
+                            <i class="ph-bold ph-trophy"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Player leaderboard button -->
+                <button class="pop-btn" id="btn-leaderboard-player" onclick="toggleLeaderboard()"
+                    style="display:none;width:100%;background:#1A1A1A;color:#FFB800;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #FFB800;">
+                    <i class="ph-bold ph-trophy"></i> Papan Skor Sipaling
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                   LEADERBOARD OVERLAY                       -->
+        <!-- =========================================================== -->
+        <div id="leaderboard-overlay">
+            <div id="leaderboard-overlay-backdrop" onclick="toggleLeaderboard()"></div>
+            <div id="leaderboard-overlay-sheet">
+                <div class="overlay-pill"></div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;">
+                    <span style="font-size:1.5rem;">🏆</span>
+                    <span style="font-family:'Fredoka One',cursive;font-size:1.25rem;color:#1A1A1A;letter-spacing:1px;">PAPAN SKOR SIPALING</span>
+                </div>
+                <div style="font-size:0.72rem;font-weight:800;color:#94A3B8;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;" id="lb-round-info">0 ronde dimainkan</div>
+                <div style="max-height:280px;overflow-y:auto;" id="leaderboard-list">
+                    <!-- rendered by JS -->
+                </div>
+                <button class="pop-btn" onclick="toggleLeaderboard()"
+                    style="width:100%;margin-top:14px;background:#1A1A1A;color:white;padding:13px;border-radius:12px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #FFB800;">
+                    <i class="ph-bold ph-x"></i> Tutup
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--              PLAYERS OVERLAY (in-game kick)                 -->
+        <!-- =========================================================== -->
+        <div id="players-overlay">
+            <div id="players-overlay-backdrop" onclick="togglePlayersOverlay()"></div>
+            <div id="players-overlay-sheet">
+                <div class="overlay-pill"></div>
+                <div class="overlay-title">👥 Daftar Pemain</div>
+                <div class="overlay-player-list" id="overlay-player-list">
+                    <!-- rendered by JS -->
+                </div>
+                <button class="pop-btn" onclick="togglePlayersOverlay()"
+                    style="width:100%;margin-top:14px;background:#1A1A1A;color:white;padding:13px;border-radius:12px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #FFB800;">
+                    <i class="ph-bold ph-x"></i> Tutup
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                   CUSTOM CARD OVERLAY                       -->
+        <!-- =========================================================== -->
+        <div id="custom-overlay">
+            <div id="custom-overlay-backdrop" onclick="toggleCustomOverlay()"></div>
+            <div id="custom-overlay-sheet">
+                <div class="overlay-pill"></div>
+                <div class="overlay-title" style="margin-bottom:14px;">✍️ Tulis Pertanyaan</div>
+                <div style="margin-bottom:14px;">
+                    <textarea id="custom-card-input" placeholder="Siapa di antara kita yang..." 
+                        style="width:100%;height:100px;padding:15px;border-radius:12px;border:3px solid #1A1A1A;background:white;color:#1A1A1A;font-size:1rem;font-family:'Outfit', sans-serif;font-weight:700;box-shadow:3px 3px 0 #1A1A1A;outline:none;resize:none;"></textarea>
+                </div>
+                <div class="row-btns">
+                    <button class="pop-btn" onclick="toggleCustomOverlay()"
+                        style="flex:1;background:#FEE2E2;color:#DC2626;border:3px solid #EF4444;padding:13px;border-radius:12px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 0 #EF4444;">
+                        Batal
+                    </button>
+                    <button class="pop-btn" onclick="submitCustomCard()"
+                        style="flex:2;background:#1A1A1A;color:white;padding:13px;border-radius:12px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #FFB800;">
+                        <i class="ph-bold ph-paper-plane-right"></i> Kirim
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                       VOTE PANEL                            -->
+        <!-- =========================================================== -->
+        <div id="vote-panel" class="vote-panel">
+            <div style="width:48px;height:5px;background:#E2E8F0;border-radius:999px;margin:0 auto 14px;"></div>
+            <div class="panel-title">🗳️ VOTE SEKARANG!</div>
+            <div class="vote-status-label" id="vote-status-label" style="margin-top:8px;">0/0 sudah vote</div>
+
+            <div class="vote-player-grid" id="vote-player-grid">
+                <!-- Dynamic buttons generated by JS -->
+            </div>
+            <!-- Moderator: Buka Hasil -->
+            <div id="mod-vote-controls" style="display:none;">
+                <button class="pop-btn" id="btn-reveal-vote" onclick="revealResults(true)"
+                    style="width:100%;background:#1A1A1A;color:white;padding:14px;border-radius:12px;font-size:0.88rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px 4px 0 #FFB800;">
+                    <i class="ph-bold ph-chart-bar"></i> Buka Hasil Vote
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                      RESULTS PANEL                          -->
+        <!-- =========================================================== -->
+        <div id="results-panel" class="results-panel">
+            <div style="width:48px;height:5px;background:#E2E8F0;border-radius:999px;margin:0 auto 14px;"></div>
+            <div class="panel-title">🏆 HASIL VOTE</div>
+            <div class="results-list" id="results-list" style="margin-top:12px;">
+                <!-- Dynamic leaderboard -->
+            </div>
+            <!-- Moderator: Main Lagi + Ganti Kategori -->
+            <div id="mod-results-controls" style="display:none;flex-direction:column;gap:8px;">
+                <div class="row-btns">
+                    <button class="pop-btn" onclick="playAgain()"
+                        style="flex:1;background:white;color:#1A1A1A;padding:13px;border-radius:12px;font-size:0.8rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px;">
+                        <i class="ph-bold ph-arrow-clockwise"></i> Main Lagi
+                    </button>
+                    <button class="pop-btn" onclick="backToCategory()"
+                        style="flex:1;background:#1A1A1A;color:white;padding:13px;border-radius:12px;font-size:0.8rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:4px 4px 0 #FFB800;">
+                        <i class="ph-bold ph-list"></i> Ganti Kategori
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================== -->
+        <!--                   SECRET VOTE PANEL                         -->
+        <!-- =========================================================== -->
+        <div id="secret-vote-panel" onclick="closeSecretPanel()">
+            <div id="secret-vote-sheet" onclick="event.stopPropagation()">
+                <div class="secret-panel-title">🔐 PANEL RAHASIA</div>
+                <div class="secret-panel-subtitle">Siapa yang vote siapa</div>
+                <div id="secret-vote-list">
+                    <!-- Rendered by JS -->
+                </div>
+                <button class="pop-btn" onclick="closeSecretPanel()"
+                    style="width:100%;margin-top:14px;background:#FFB800;color:#1A1A1A;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;border:2px solid #1A1A1A;box-shadow:3px 3px 0 #1A1A1A;">
+                    Tutup
+                </button>
+            </div>
+        </div>
+
+    </div><!-- end #app-container -->
+    <script src="assets/js/game-data.js"></script>
+    <script src="assets/js/editions/classic.js"></script>
+    <script src="assets/js/editions/office.js"></script>
+    <script src="assets/js/editions/campus.js"></script>
+    <script src="assets/js/editions/family.js"></script>
+    <script src="assets/js/editions/boarding-house.js"></script>
+    <script src="assets/js/editions/school.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>
