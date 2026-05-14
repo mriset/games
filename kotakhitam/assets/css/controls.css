@@ -1,0 +1,13 @@
+﻿        .nav-controls {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+            margin-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .row-controls {
+            display: flex;
+            gap: 10px;
+            flex-direction: row;
+        }

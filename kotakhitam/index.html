@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KOTAK HITAM - Multiplayer</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&family=Montserrat:wght@400;600;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body>
+    <div id="app-container">
+        <div class="ambient-light"></div>
+        <div class="ambient-light bottom"></div>
+
+        <div id="home-screen" class="screen active-screen">
+            <div class="menu-content">
+                <div class="logo-container">
+                    <div class="logo-box">
+                        <span class="corner-ornament top-right"></span>
+                        <span class="corner-ornament bottom-left"></span>
+                        <h1>KOTAK</h1>
+                        <h1>HITAM</h1>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <input type="text" id="player-name" placeholder="Nama Kamu (Max 12 char)" maxlength="12"
+                        autocomplete="off">
+                    <button class="btn btn-primary" id="btn-create-room" data-action="create-room">
+                        <i class="fa-solid fa-plus"></i> Buat Room
+                    </button>
+
+                    <div class="divider">ATAU GABUNG</div>
+
+                    <input type="text" id="room-code-input" class="uppercase-input" placeholder="KODE ROOM"
+                        maxlength="4" autocomplete="off">
+                    <button class="btn btn-secondary" id="btn-join-room" data-action="join-room">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Gabung Room
+                    </button>
+                </div>
+            </div>
+            <p class="edition-label">MULTIPLAYER EDITION</p>
+        </div>
+
+        <div id="lobby-screen" class="screen">
+            <div class="top-bar">
+                <div class="top-bar-spacer"></div>
+                <div class="counter-badge">LOBBY</div>
+                <div class="top-bar-spacer"></div>
+            </div>
+
+            <div class="menu-content">
+                <p class="lobby-label">KODE ROOM</p>
+                <h1 id="lobby-room-code" class="room-code-display" data-action="copy-invite"
+                    title="Klik untuk menyalin link invite">----</h1>
+                <p class="invite-hint">(Klik kode di atas untuk menyalin link invite)</p>
+
+                <h3 class="player-count-heading">Daftar Pemain: <span id="player-count">0</span></h3>
+                <div class="player-list" id="player-list"></div>
+            </div>
+
+            <div class="nav-controls is-compact">
+                <div id="mod-lobby-controls" class="mod-controls mod-lobby-controls">
+                    <button class="btn btn-primary" id="btn-start-game" data-action="start-game" disabled>
+                        Menunggu (Min. 3 Pemain)
+                    </button>
+                </div>
+                <div class="lobby-actions">
+                    <button class="btn btn-secondary" data-action="toggle-guide">
+                        <i class="fa-solid fa-book"></i> Panduan Bermain
+                    </button>
+                    <button class="btn btn-danger" data-action="confirm-leave">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar Room
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="play-screen" class="screen">
+            <div class="top-bar">
+                <button class="btn-icon-top btn-leave-top" data-action="confirm-leave" title="Keluar Room">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+                <div class="counter-badge deck-progress-badge" id="deck-progress">0/0</div>
+                <div class="counter-badge clickable-badge" id="play-room-code" data-action="secret-panel-tap"
+                    title="Moderator: Tap 5x untuk Secret Vote">ROOM: ----</div>
+            </div>
+
+            <div class="card-container">
+                <div class="card-hp fade-in" id="hp-card-view"></div>
+
+                <div id="vote-panel" class="vote-panel">
+                    <div class="panel-title">VOTE SEKARANG</div>
+                    <div class="vote-status" id="vote-status">0/0 sudah vote</div>
+                    <div id="pending-voters" class="pending-voters"></div>
+                    <div class="vote-btns">
+                        <button class="btn-vote btn-yes" id="btn-vote-ya" data-action="vote-yes">YA</button>
+                        <button class="btn-vote btn-no" id="btn-vote-tidak" data-action="vote-no">TIDAK</button>
+                    </div>
+                </div>
+
+                <div id="results-panel" class="results-panel">
+                    <div class="panel-title">HASIL VOTE</div>
+                    <div class="results-bars">
+                        <div class="result-item ya">
+                            <span><i class="fa-solid fa-thumbs-up"></i> YA</span>
+                            <span id="res-ya">0</span>
+                        </div>
+                        <div class="result-item tidak">
+                            <span><i class="fa-solid fa-thumbs-down"></i> TIDAK</span>
+                            <span id="res-tidak">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls" id="play-controls">
+                <div id="mod-play-controls" class="mod-controls">
+                    <div class="row-controls">
+                        <button class="btn btn-primary flex-fill" id="btn-next" data-action="trigger-shuffle">
+                            <i class="fa-solid fa-shuffle"></i> Acak
+                        </button>
+                        <button class="btn btn-secondary flex-fill" id="btn-show-players" data-action="toggle-players">
+                            <i class="fa-solid fa-users"></i> Pemain
+                        </button>
+                    </div>
+                    <div class="row-controls">
+                        <button class="btn btn-secondary flex-fill" id="btn-start-vote" data-action="start-vote">
+                            MULAI VOTE
+                        </button>
+                        <button class="btn btn-secondary flex-fill" id="btn-reveal-vote" data-action="reveal-vote">
+                            BUKA HASIL
+                        </button>
+                        <button class="btn btn-secondary flex-fill" id="btn-reset-vote" data-action="reset-vote">
+                            RESET VOTE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="secret-vote-overlay">
+        <div id="secret-vote-backdrop" data-action="toggle-secret"></div>
+        <div id="secret-vote-sheet">
+            <div class="overlay-pill"></div>
+            <div class="overlay-title"><i class="fa-solid fa-eye"></i> SECRET VOTE PANEL</div>
+            <div class="overlay-player-list" id="secret-vote-list"></div>
+            <button class="btn btn-secondary sheet-close-btn" data-action="toggle-secret">
+                <i class="fa-solid fa-xmark"></i> Tutup
+            </button>
+        </div>
+    </div>
+
+    <div id="players-overlay">
+        <div id="players-overlay-backdrop" data-action="toggle-players"></div>
+        <div id="players-overlay-sheet">
+            <div class="overlay-pill"></div>
+            <div class="overlay-title">&#9876; DAFTAR PEMAIN</div>
+            <div class="overlay-player-list" id="overlay-player-list"></div>
+            <button class="btn btn-secondary sheet-close-btn" data-action="toggle-players">
+                <i class="fa-solid fa-xmark"></i> Tutup
+            </button>
+        </div>
+    </div>
+
+    <div id="guide-overlay">
+        <div id="guide-overlay-backdrop" data-action="toggle-guide"></div>
+        <div id="guide-overlay-sheet">
+            <div class="overlay-pill"></div>
+            <div class="overlay-title"><i class="fa-solid fa-book"></i> PANDUAN BERMAIN</div>
+            <div class="guide-content">
+                <div class="guide-section">
+                    <h4>CARA BERMAIN (ONLINE & TATAP MUKA)</h4>
+                    <ul>
+                        <li><strong>1. Baca Pertanyaan:</strong> Moderator menekan "Acak". Bacakan pertanyaan yang
+                            muncul di layar keras-keras agar semua pemain mendengar.</li>
+                        <li><strong>2. Vote Rahasia:</strong> Moderator menekan "Mulai Vote". Setiap pemain memilih YA
+                            atau TIDAK di HP masing-masing secara diam-diam.</li>
+                        <li><strong>3. Buka Hasil:</strong> Setelah vote terkumpul, Moderator menekan "Buka Hasil".
+                            Total jawaban YA dan TIDAK akan tampil di layar semua orang.</li>
+                        <li><strong>4. Sesi Detektif:</strong> Siapa yang jawab YA? Saling tatap, lempar tuduhan, dan
+                            berdebat secara langsung!.</li>
+                        <li><strong>5. Lanjut Ronde:</strong> Moderator kembali mengacak pertanyaan baru untuk ronde
+                            berikutnya.</li>
+                    </ul>
+                </div>
+                <div class="guide-section">
+                    <h4>ATURAN EMAS!</h4>
+                    <ul>
+                        <li>Tidak ada yang tahu siapa memilih apa. Sistem 100% anonim.</li>
+                        <li>Kamu tidak harus mengaku! Boleh berbohong atau ikut menuduh orang lain untuk menutupi
+                            jejakmu.</li>
+                        <li>Ketegangan dari saling curiga adalah inti permainan ini. Nikmati dramanya!</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn btn-secondary sheet-close-btn" data-action="toggle-guide">
+                <i class="fa-solid fa-xmark"></i> Tutup
+            </button>
+        </div>
+    </div>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/session.js"></script>
+    <script src="assets/js/state.js"></script>
+    <script src="assets/data/cards.js"></script>
+    <script src="assets/js/dom.js"></script>
+    <script src="assets/js/audio.js"></script>
+    <script src="assets/js/render.js"></script>
+    <script src="assets/js/overlays.js"></script>
+    <script src="assets/js/room.js"></script>
+    <script src="assets/js/gameplay.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+</body>
+
+</html>

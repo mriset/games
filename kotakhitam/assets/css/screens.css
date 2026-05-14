@@ -1,0 +1,87 @@
+﻿        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .active-screen {
+            display: flex !important;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .menu-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .logo-box {
+            border: 2px solid var(--pale-gold);
+            padding: 25px 35px;
+            background: rgba(10, 10, 12, 0.8);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .logo-box::before,
+        .logo-box::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--pale-gold);
+            border-radius: 50%;
+        }
+
+        .logo-box::before {
+            top: -4px;
+            left: -4px;
+        }
+
+        .logo-box::after {
+            bottom: -4px;
+            right: -4px;
+        }
+
+        .corner-ornament {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--pale-gold);
+            border-radius: 50%;
+        }
+
+        .corner-ornament.top-right {
+            top: -4px;
+            right: -4px;
+        }
+
+        .corner-ornament.bottom-left {
+            bottom: -4px;
+            left: -4px;
+        }
+
+        .logo-box h1 {
+            font-family: 'Cinzel', 'Georgia', serif;
+            font-size: 3rem;
+            color: var(--pale-gold);
+            letter-spacing: 6px;
+            font-weight: 800;
+            line-height: 1.1;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            margin-bottom: 5px;
+        }

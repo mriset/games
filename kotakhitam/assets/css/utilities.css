@@ -1,0 +1,171 @@
+.uppercase-input {
+    text-transform: uppercase;
+}
+
+.edition-label {
+    text-align: center;
+    color: #666;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    font-family: 'Inter', sans-serif;
+}
+
+.top-bar-spacer {
+    width: 44px;
+}
+
+.lobby-label {
+    color: #aaa;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.room-code-display {
+    font-size: 4rem;
+    color: var(--pale-gold);
+    letter-spacing: 10px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.invite-hint {
+    font-size: 0.75rem;
+    color: #888;
+    font-style: italic;
+    margin-top: -5px;
+    margin-bottom: 20px;
+}
+
+.player-count-heading {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.lobby-actions,
+.control-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.lobby-actions {
+    margin-top: 15px;
+}
+
+.mod-controls {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mod-controls.is-visible {
+    display: flex;
+}
+
+.mod-lobby-controls {
+    gap: 15px;
+}
+
+.nav-controls.is-compact {
+    padding-bottom: 15px;
+}
+
+.btn-leave-top {
+    border-color: rgba(198, 40, 40, 0.4);
+    color: #c62828;
+}
+
+.deck-progress-badge {
+    font-size: 0.75rem;
+    background: rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.4);
+    color: var(--pale-gold);
+}
+
+.clickable-badge {
+    cursor: pointer;
+}
+
+.pending-voters {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.flex-fill {
+    flex: 1;
+}
+
+.sheet-close-btn {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.inline-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pending-voters-label {
+    color: #888;
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.all-voted-message {
+    color: #4caf50;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.empty-overlay-message {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+.secret-vote-pending {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.secret-vote-yes {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.secret-vote-no {
+    color: #f44336;
+    font-weight: bold;
+}
+
+.player-name-strong {
+    font-weight: bold;
+}
+
+.icon-gold {
+    color: var(--pale-gold);
+}
+
+.icon-muted {
+    color: #666;
+}
+
+.you-label {
+    font-size: 0.72rem;
+    color: #666;
+}
+
+.role-label {
+    font-size: 0.72rem;
+    color: var(--pale-gold);
+    letter-spacing: 1px;
+}
+
+#btn-reveal-vote,
+#btn-reset-vote {
+    display: none;
+}

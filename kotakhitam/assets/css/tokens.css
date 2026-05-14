@@ -1,0 +1,14 @@
+﻿:root {
+            --charcoal: #050505;
+            --off-white: #f5f2eb;
+            --pale-gold: #D4AF37;
+            --dark-gold: #aa8820;
+            --crimson: #8B1A1A;
+            --bg-grad: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 100%);
+
+            --lvl1-color: #F5F5F5;
+            --lvl2-color: #B8960C;
+            --lvl3-color: #D35400;
+            --lvl4-color: #8B1A1A;
+            --lvl5-color: #8B0000;
+        }

@@ -1,0 +1,128 @@
+﻿        /* === PLAYERS OVERLAY (in-game kick) === */
+        #players-overlay, #secret-vote-overlay, #guide-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        #players-overlay.show, #secret-vote-overlay.show, #guide-overlay.show {
+            pointer-events: all;
+            opacity: 1;
+        }
+
+        #players-overlay-backdrop, #secret-vote-backdrop, #guide-overlay-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        #players-overlay-sheet, #secret-vote-sheet, #guide-overlay-sheet {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            background: #0d0d10;
+            border-top: 1px solid rgba(212, 175, 55, 0.4);
+            border-left: 1px solid rgba(212, 175, 55, 0.15);
+            border-right: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 20px 20px 0 0;
+            padding: 12px 20px 32px;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.08);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #players-overlay.show #players-overlay-sheet, #secret-vote-overlay.show #secret-vote-sheet, #guide-overlay.show #guide-overlay-sheet {
+            transform: translateY(0);
+        }
+
+        .overlay-pill {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+            margin: 0 auto 14px;
+        }
+
+        .overlay-title {
+            font-family: 'Cinzel', 'Georgia', serif;
+            font-size: 1rem;
+            color: var(--pale-gold);
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: 3px;
+        }
+
+        .overlay-player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .overlay-player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--off-white);
+        }
+
+        .guide-content {
+            max-height: 50vh;
+            overflow-y: auto;
+            color: var(--off-white);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding-right: 5px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .guide-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .guide-content::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 2px;
+        }
+
+        .guide-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .guide-section h4 {
+            color: var(--pale-gold);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .guide-section ul {
+            padding-left: 18px;
+        }
+
+        .guide-section li {
+            margin-bottom: 8px;
+        }
+        
+        .guide-section li:last-child {
+            margin-bottom: 0;
+        }
