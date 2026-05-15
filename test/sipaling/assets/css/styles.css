@@ -1691,8 +1691,8 @@ input[type="text"]:focus,
 
 body.sheet-open #sp-card-area.panel-open {
     align-items: center !important;
-    padding-top: 12px !important;
-    padding-bottom: min(58svh, 410px) !important;
+    padding-top: clamp(22px, 5svh, 64px) !important;
+    padding-bottom: clamp(230px, 34svh, 340px) !important;
 }
 
 body.sheet-open .sp-card {
@@ -1748,8 +1748,8 @@ body.sheet-open .sp-card-text {
 
     body.sheet-open #sp-card-area.panel-open {
         transform: none !important;
-        padding-top: 10px !important;
-        padding-bottom: 60svh !important;
+        padding-top: clamp(18px, 4svh, 34px) !important;
+        padding-bottom: clamp(210px, 36svh, 300px) !important;
     }
 
     .vote-panel,
