@@ -1,0 +1,198 @@
+/* === PLAYERS OVERLAY (in-game kick) === */
+#players-overlay,
+#secret-vote-overlay,
+#guide-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s var(--ease-out);
+}
+
+#players-overlay.show,
+#secret-vote-overlay.show,
+#guide-overlay.show {
+    pointer-events: all;
+    opacity: 1;
+}
+
+#players-overlay-backdrop,
+#secret-vote-backdrop,
+#guide-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.68);
+    backdrop-filter: blur(2px);
+}
+
+#players-overlay-sheet,
+#secret-vote-sheet,
+#guide-overlay-sheet {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    max-height: min(82vh, calc(var(--app-height) - var(--safe-top) - 20px));
+    display: flex;
+    flex-direction: column;
+    background: #0d0d10;
+    border-top: 1px solid rgba(212, 175, 55, 0.42);
+    border-left: 1px solid rgba(212, 175, 55, 0.15);
+    border-right: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 22px 22px 0 0;
+    padding: 12px 20px calc(var(--safe-bottom) + 24px);
+    box-shadow: 0 -10px 34px rgba(0, 0, 0, 0.82), 0 0 24px rgba(212, 175, 55, 0.08);
+    transform: translateY(102%);
+    transition: transform 0.34s var(--ease-spring);
+}
+
+#players-overlay.show #players-overlay-sheet,
+#secret-vote-overlay.show #secret-vote-sheet,
+#guide-overlay.show #guide-overlay-sheet {
+    transform: translateY(0);
+}
+
+.overlay-pill {
+    width: 42px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    margin: 0 auto 10px;
+    flex: 0 0 auto;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.overlay-sheet:active .overlay-pill {
+    transform: scaleX(1.5);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.overlay-swipe-hint {
+    text-align: center;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.overlay-title {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: clamp(0.86rem, 3.8vw, 1rem);
+    color: var(--pale-gold);
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 2.4px;
+    flex: 0 0 auto;
+}
+
+.overlay-player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 42vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 2px;
+}
+
+.overlay-player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--off-white);
+}
+
+.guide-content {
+    max-height: none;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: var(--off-white);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    padding-right: 5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.guide-content::-webkit-scrollbar,
+.overlay-player-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.guide-content::-webkit-scrollbar-thumb,
+.overlay-player-list::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+}
+
+.guide-accordion-item {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.055);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: background 0.2s;
+}
+
+.guide-accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.guide-accordion-header h4 {
+    color: var(--pale-gold);
+    margin: 0;
+    letter-spacing: 1px;
+    font-size: 0.92rem;
+    font-family: 'Cinzel', serif;
+}
+
+.guide-accordion-header i {
+    color: var(--pale-gold);
+    transition: transform 0.3s;
+}
+
+.guide-accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding: 0 14px;
+}
+
+.guide-accordion-item.open .guide-accordion-header i {
+    transform: rotate(180deg);
+}
+
+.guide-accordion-item.open .guide-accordion-body {
+    max-height: 500px;
+    padding: 0 14px 14px 14px;
+}
+
+.guide-accordion-body ul {
+    padding-left: 18px;
+    margin: 0;
+}
+
+.guide-accordion-body li {
+    margin-bottom: 8px;
+}
+
+.guide-accordion-body li:last-child {
+    margin-bottom: 0;
+}

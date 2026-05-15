@@ -1,0 +1,131 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cardEntry {
+    0% {
+        opacity: 0;
+        transform: translateY(28px) scale(0.94) rotateX(10deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+    }
+}
+
+.fade-in {
+    animation: cardEntry 0.46s var(--ease-spring) forwards;
+}
+
+.animate-shuffle {
+    animation: shufflePulse 0.28s ease-in-out infinite;
+}
+
+@keyframes shufflePulse {
+    0% {
+        transform: scale(1) rotate(0deg);
+        filter: brightness(1);
+    }
+
+    25% {
+        transform: scale(1.018) rotate(-1deg);
+        filter: brightness(1.18);
+    }
+
+    50% {
+        transform: scale(1) rotate(0deg);
+        filter: brightness(1.08);
+    }
+
+    75% {
+        transform: scale(1.018) rotate(1deg);
+        filter: brightness(1.18);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        filter: brightness(1);
+    }
+}
+
+.animate-pop {
+    animation: popIn 0.38s var(--ease-spring) forwards;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.94);
+    }
+
+    55% {
+        transform: scale(1.025);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@keyframes slotRattle {
+    0%   { transform: translateY(0); }
+    20%  { transform: translateY(-6px); }
+    40%  { transform: translateY(4px); }
+    60%  { transform: translateY(-4px); }
+    80%  { transform: translateY(3px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes cardSlam {
+    0%   { transform: translateY(-40px) scale(1.04); opacity: 0.6; }
+    55%  { transform: translateY(6px) scale(0.97); opacity: 1; }
+    75%  { transform: translateY(-4px) scale(1.01); }
+    90%  { transform: translateY(2px) scale(0.99); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+}
+
+@keyframes voteConfirm {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes resultBarFill {
+    from { width: 0; }
+    to { width: var(--fill-width); }
+}
+
+@keyframes floatIcon {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}

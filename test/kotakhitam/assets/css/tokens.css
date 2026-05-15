@@ -1,0 +1,44 @@
+:root {
+    --charcoal: #050505;
+    --off-white: #f5f2eb;
+    --pale-gold: #D4AF37;
+    --dark-gold: #aa8820;
+    --crimson: #8B1A1A;
+    --bg-grad: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 100%);
+
+    --lvl1-color: #F5F5F5;
+    --lvl2-color: #B8960C;
+    --lvl3-color: #D35400;
+    --lvl4-color: #8B1A1A;
+    --lvl5-color: #8B0000;
+
+    --lvl-label-1: #AEEA00;
+    --lvl-label-2: #FFD600;
+    --lvl-label-3: #FF6D00;
+    --lvl-label-4: #D50000;
+    --lvl-label-5: #6200EA;
+
+    --toast-bg: rgba(20, 20, 24, 0.95);
+    --toast-success: #4caf50;
+    --toast-error: #f44336;
+    
+    --duration-flip: 0.6s;
+    --duration-reveal: 0.8s;
+
+    --app-height: 100dvh;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --screen-pad-x: clamp(16px, 5vw, 24px);
+    --screen-pad-y: clamp(14px, 4vh, 24px);
+    --control-height: 56px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+    --hairline: rgba(255, 255, 255, 0.08);
+    --surface-1: rgba(10, 10, 12, 0.74);
+    --surface-2: rgba(18, 18, 22, 0.88);
+}

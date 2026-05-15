@@ -1,0 +1,33 @@
+.nav-controls {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+    margin-top: clamp(10px, 2vh, 15px);
+    padding-bottom: calc(var(--safe-bottom) + 2px);
+    flex: 0 0 auto;
+}
+
+.row-controls {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    min-width: 0;
+}
+
+.row-controls .btn {
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: clamp(0.78rem, 3.2vw, 0.95rem);
+    letter-spacing: 0.7px;
+}
+
+@media (max-width: 360px) {
+    .row-controls {
+        gap: 8px;
+    }
+
+    .row-controls .btn {
+        padding-inline: 8px;
+        letter-spacing: 0.4px;
+    }
+}

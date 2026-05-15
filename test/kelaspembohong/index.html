@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kelas Pembohong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- SCREEN: SPLASH -->
+    <div id="screen-splash" class="screen active">
+      <div class="splash-bg" aria-hidden="true">
+        <div class="chalk-line line-a"></div>
+        <div class="chalk-line line-b"></div>
+        <div class="floating-mark mark-a"><i data-lucide="eye"></i></div>
+        <div class="floating-mark mark-b"><i data-lucide="scan-eye"></i></div>
+      </div>
+      <div class="splash-content">
+        <div class="brand-mark"><i data-lucide="theater"></i></div>
+        <p class="eyebrow">Game deduksi sosial</p>
+        <h1 class="game-title">Kelas<br><span>Pembohong</span></h1>
+        <p class="game-subtitle">Bikin jawaban palsu yang paling masuk akal. Tebak fakta asli sebelum temanmu menipu satu kelas.</p>
+        <div class="splash-badges">
+          <span><i data-lucide="users-round"></i>4-16 Pemain</span>
+          <span><i data-lucide="timer"></i>30-60 Menit</span>
+          <span><i data-lucide="badge-check"></i>12+</span>
+        </div>
+        <div class="splash-actions">
+          <button class="btn btn-primary btn-xl" onclick="showScreen('screen-home')">
+            <i data-lucide="play"></i>
+            <span>Mulai Main</span>
+          </button>
+          <button class="btn btn-ghost" onclick="showScreen('screen-rules')">
+            <i data-lucide="book-open"></i>
+            <span>Cara Main</span>
+          </button>
+        </div>
+      </div>
+      <div class="splash-ticker">
+        <div class="ticker-inner">
+          <span>BOHONG YANG BAGUS</span><span>DEDUKSI SOSIAL</span><span>FAKTA GILA DUNIA</span><span>KELAS PEMBOHONG</span>
+          <span>BOHONG YANG BAGUS</span><span>DEDUKSI SOSIAL</span><span>FAKTA GILA DUNIA</span><span>KELAS PEMBOHONG</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: HOME -->
+    <div id="screen-home" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-splash')" aria-label="Kembali"><i data-lucide="arrow-left"></i></button>
+        <span class="header-title">Menu Utama</span>
+      </div>
+      <div class="screen-body">
+        <div class="home-intro">
+          <div>
+            <p class="eyebrow">Pilih peranmu</p>
+            <h2>Siapkan kelas, undang teman, mulai menipu.</h2>
+          </div>
+          <i data-lucide="clipboard-list"></i>
+        </div>
+        <div class="home-card" onclick="checkPinAndGoToCreate()">
+          <div class="home-card-icon"><i data-lucide="home"></i></div>
+          <div>
+            <div class="home-card-title">Buat Ruangan</div>
+            <div class="home-card-desc">Jadi host, undang teman, mulai game</div>
+          </div>
+          <div class="home-card-arrow"><i data-lucide="chevron-right"></i></div>
+        </div>
+        <div class="home-card" onclick="showScreen('screen-join')">
+          <div class="home-card-icon"><i data-lucide="log-in"></i></div>
+          <div>
+            <div class="home-card-title">Gabung Ruangan</div>
+            <div class="home-card-desc">Masukkan kode ruangan dari host</div>
+          </div>
+          <div class="home-card-arrow"><i data-lucide="chevron-right"></i></div>
+        </div>
+        <div class="home-card" onclick="showScreen('screen-rules')">
+          <div class="home-card-icon"><i data-lucide="book-open"></i></div>
+          <div>
+            <div class="home-card-title">Cara Bermain</div>
+            <div class="home-card-desc">Aturan, tips, dan strategi menang</div>
+          </div>
+          <div class="home-card-arrow"><i data-lucide="chevron-right"></i></div>
+        </div>
+        <div class="editions-preview">
+          <div class="editions-label">9 Edisi Tersedia</div>
+          <div class="editions-chips">
+            <span><i data-lucide="globe-2"></i>Dunia</span><span><i data-lucide="clapperboard"></i>Pop Kultur</span><span><i data-lucide="trophy"></i>Olahraga</span>
+            <span><i data-lucide="utensils"></i>Makanan</span><span><i data-lucide="flask-conical"></i>Sains</span><span><i data-lucide="building-2"></i>Indonesia</span>
+            <span><i data-lucide="coins"></i>Bisnis</span><span><i data-lucide="orbit"></i>Luar Angkasa</span><span><i data-lucide="moon"></i>Gelap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: CREATE ROOM -->
+    <div id="screen-create" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-home')" aria-label="Kembali"><i data-lucide="arrow-left"></i></button>
+        <span class="header-title">Buat Ruangan</span>
+      </div>
+      <div class="screen-body">
+        <div class="form-section">
+          <label class="form-label">Nama Panggilanmu</label>
+          <input type="text" id="host-name" class="form-input" placeholder="misal: Andi Pembohong" maxlength="20" />
+        </div>
+        <button class="btn btn-primary btn-full" onclick="createRoom()">
+          <i data-lucide="dice-5"></i>
+          <span id="create-btn-text">Buat Ruangan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN: JOIN ROOM -->
+    <div id="screen-join" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-home')" aria-label="Kembali"><i data-lucide="arrow-left"></i></button>
+        <span class="header-title">Gabung Ruangan</span>
+      </div>
+      <div class="screen-body">
+        <div class="join-hero">
+          <div class="join-icon"><i data-lucide="theater"></i></div>
+          <p>Minta kode ruangan dari host, lalu masuk.</p>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Kode Ruangan</label>
+          <input type="text" id="join-code" class="form-input code-input" placeholder="ULAR42" maxlength="6" oninput="this.value=this.value.toUpperCase()" />
+        </div>
+        <div class="form-section">
+          <label class="form-label">Nama Panggilanmu</label>
+          <input type="text" id="join-name" class="form-input" placeholder="misal: Budi Jujur" maxlength="20" />
+        </div>
+        <button class="btn btn-primary btn-full" onclick="joinRoom()">
+          <i data-lucide="log-in"></i>
+          <span>Gabung Sekarang</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN: LOBBY -->
+    <div id="screen-lobby" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="leaveRoom()" aria-label="Keluar"><i data-lucide="x"></i></button>
+        <span class="header-title">Lobby</span>
+      </div>
+      <div class="screen-body">
+        <div class="lobby-stack">
+          <div class="room-code-display">
+            <div class="room-code-label">Kode Ruangan</div>
+            <div class="room-code-value" id="lobby-room-code">------</div>
+            <button class="btn btn-ghost btn-sm" onclick="copyRoomCode()"><i data-lucide="copy"></i><span>Salin</span></button>
+          </div>
+          <div class="lobby-info">
+            <div class="lobby-info-item">
+              <span class="info-icon"><i data-lucide="book-marked"></i></span>
+              <span id="lobby-edition">-</span>
+            </div>
+            <div class="lobby-info-item">
+              <span class="info-icon"><i data-lucide="refresh-cw"></i></span>
+              <span id="lobby-rounds">- Ronde</span>
+            </div>
+            <div class="lobby-info-item">
+              <span class="info-icon"><i data-lucide="flag"></i></span>
+              <span id="lobby-winmode">-</span>
+            </div>
+          </div>
+          <div class="players-section">
+            <div class="section-title">Pemain (<span id="player-count">0</span>/16)</div>
+            <div id="players-list" class="players-list"></div>
+          </div>
+          <div id="host-actions" style="display:none">
+            <button class="btn btn-primary btn-full" id="next-settings-btn" onclick="goToGameSettings()">
+              <i data-lucide="settings-2"></i>
+              <span>Atur Permainan</span>
+            </button>
+            <div class="form-hint" id="start-hint">Lanjutkan untuk pilih edisi dan setting permainan</div>
+          </div>
+          <div id="waiting-msg" class="waiting-msg">
+            <div class="spinner"></div>
+            <span>Menunggu moderator mengatur permainan...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: GAME SETTINGS -->
+    <div id="screen-game-settings" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-lobby')" aria-label="Kembali"><i data-lucide="arrow-left"></i></button>
+        <span class="header-title">Setting Game</span>
+      </div>
+      <div class="screen-body">
+        <div class="form-section">
+          <label class="form-label">Pilih Edisi Kartu</label>
+          <div class="edition-list" id="edition-list"></div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Jumlah Ronde</label>
+          <div class="round-selector">
+            <button class="round-btn" onclick="adjustRounds(-5)" aria-label="Kurangi 5 ronde"><i data-lucide="minus"></i><span>5</span></button>
+            <span id="round-count" class="round-count">10</span>
+            <button class="round-btn" onclick="adjustRounds(5)" aria-label="Tambah 5 ronde"><i data-lucide="plus"></i><span>5</span></button>
+          </div>
+          <div class="form-hint">Rekomendasi: 10 ronde, sekitar 40 menit</div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Kondisi Menang</label>
+          <div class="win-condition-tabs">
+            <button class="win-tab active" data-mode="standard" onclick="selectWinMode(this,'standard')">Standar<br><small>Poin Tertinggi</small></button>
+            <button class="win-tab" data-mode="race" onclick="selectWinMode(this,'race')">Balapan<br><small>Capai 15 Poin</small></button>
+            <button class="win-tab" data-mode="elimination" onclick="selectWinMode(this,'elimination')">Eliminasi<br><small>Setiap 5 Ronde</small></button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="startGame()">
+          <i data-lucide="rocket"></i>
+          <span>Mulai Game</span>
+        </button>
+        <div class="form-hint" id="settings-start-hint">Butuh minimal 3 pemain untuk mulai game</div>
+      </div>
+    </div>
+
+    <!-- SCREEN: QUESTION -->
+    <div id="screen-question" class="screen">
+      <div class="game-topbar">
+        <div class="game-info">
+          <button class="btn-back compact" onclick="exitGameMiddle()" title="Keluar Game" aria-label="Keluar Game"><i data-lucide="x"></i></button>
+          <span class="ronde-badge" id="q-ronde">Ronde 1/10</span>
+        </div>
+        <div class="scores-mini" id="scores-mini"></div>
+      </div>
+      <div class="screen-body">
+        <div class="phase-indicator phase-read">
+          <i data-lucide="book-open"></i>
+          <span>Baca Pertanyaan</span>
+        </div>
+        <div class="question-card">
+          <div class="question-category" id="q-category">Hukum Konyol</div>
+          <div class="question-text" id="q-text">Loading...</div>
+        </div>
+        <div class="question-hint">
+          <i data-lucide="lightbulb"></i>
+          <span>Karang jawaban palsu yang terdengar paling masuk akal.</span>
+        </div>
+        <div id="host-next-btn" style="display:none">
+          <button class="btn btn-primary btn-full" onclick="advancePhase('writing')">
+            <i data-lucide="pen-line"></i>
+            <span>Mulai Fase Menulis</span>
+          </button>
+        </div>
+        <div id="waiting-host-start" class="waiting-msg">
+          <div class="spinner"></div>
+          <span>Menunggu host memulai fase menulis...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: WRITING -->
+    <div id="screen-writing" class="screen">
+      <div class="game-topbar">
+        <div class="game-info">
+          <button class="btn-back compact" onclick="exitGameMiddle()" title="Keluar Game" aria-label="Keluar Game"><i data-lucide="x"></i></button>
+          <span class="ronde-badge" id="w-ronde">Ronde 1/10</span>
+        </div>
+        <div class="timer-display" id="w-timer">90</div>
+      </div>
+      <div class="screen-body">
+        <div class="phase-indicator phase-write">
+          <i data-lucide="pen-line"></i>
+          <span>Tulis Kebohonganmu</span>
+        </div>
+        <div class="writing-question" id="w-question-text"></div>
+        <div class="form-section">
+          <label class="form-label">Jawaban Palsu Meyakinkanmu</label>
+          <textarea id="lie-input" class="form-textarea" placeholder="Tulis kebohongan yang terdengar nyata. Semakin spesifik semakin baik." maxlength="200" rows="4"></textarea>
+          <div class="char-counter"><span id="char-count">0</span>/200</div>
+        </div>
+        <div id="submitted-indicator" class="submitted-ok" style="display:none">
+          <span>Jawaban terkirim. Menunggu pemain lain...</span>
+          <div class="submitted-count" id="submitted-count"></div>
+        </div>
+        <button id="submit-lie-btn" class="btn btn-primary btn-full" onclick="submitLie()">
+          <i data-lucide="send"></i>
+          <span>Kirim Kebohongan</span>
+        </button>
+        <div class="writing-tips">
+          <div class="tip-title"><i data-lucide="lightbulb"></i><span>Tips Bohong</span></div>
+          <div class="tip-item">Jadilah spesifik: angka dan nama bikin meyakinkan.</div>
+          <div class="tip-item">Jangan terlalu gila: yang wajar lebih mudah dipercaya.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: VOTING -->
+    <div id="screen-voting" class="screen">
+      <div class="game-topbar">
+        <div class="game-info">
+          <button class="btn-back compact" onclick="exitGameMiddle()" title="Keluar Game" aria-label="Keluar Game"><i data-lucide="x"></i></button>
+          <span class="ronde-badge" id="v-ronde">Ronde 1/10</span>
+        </div>
+        <div class="timer-display" id="v-timer">30</div>
+      </div>
+      <div class="screen-body">
+        <div class="phase-indicator phase-vote">
+          <i data-lucide="vote"></i>
+          <span>Vote Jawaban Asli</span>
+        </div>
+        <div class="voting-question" id="v-question-text"></div>
+        <div class="answers-grid" id="answers-grid"></div>
+        <div id="voted-indicator" class="submitted-ok" style="display:none">
+          <span>Kamu sudah memilih. Menunggu pemain lain...</span>
+          <div class="submitted-count" id="voted-count"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: REVEAL -->
+    <div id="screen-reveal" class="screen">
+      <div class="game-topbar">
+        <div class="game-info">
+          <button class="btn-back compact" onclick="exitGameMiddle()" title="Keluar Game" aria-label="Keluar Game"><i data-lucide="x"></i></button>
+          <span class="ronde-badge" id="r-ronde">Ronde 1/10</span>
+        </div>
+      </div>
+      <div class="screen-body">
+        <div class="phase-indicator phase-reveal">
+          <i data-lucide="lock-open"></i>
+          <span>Bongkar Rahasia</span>
+        </div>
+        <div class="reveal-truth">
+          <div class="reveal-truth-label">Jawaban Asli</div>
+          <div class="reveal-truth-text" id="reveal-truth"></div>
+          <div class="reveal-question-small" id="reveal-question"></div>
+        </div>
+        <div class="reveal-answers" id="reveal-answers"></div>
+        <div class="round-scores" id="round-scores"></div>
+        <div id="host-reveal-next" style="display:none">
+          <button class="btn btn-primary btn-full" onclick="nextRound()" id="next-round-btn">
+            <i data-lucide="arrow-right"></i>
+            <span>Ronde Berikutnya</span>
+          </button>
+        </div>
+        <div id="player-reveal-wait" class="waiting-msg">
+          <div class="spinner"></div>
+          <span>Menunggu host melanjutkan...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: SCOREBOARD -->
+    <div id="screen-scoreboard" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="exitGameMiddle()" title="Keluar Game" aria-label="Keluar Game"><i data-lucide="x"></i></button>
+        <span class="header-title">Papan Skor</span>
+      </div>
+      <div class="screen-body">
+        <div class="scoreboard-header">
+          <div class="score-ronde-info" id="score-ronde-info">Game Selesai!</div>
+        </div>
+        <div id="scoreboard-list" class="scoreboard-list"></div>
+        <div id="host-score-actions" style="display:none">
+          <button class="btn btn-primary btn-full" onclick="continueGame()" id="continue-game-btn">
+            <i data-lucide="arrow-right"></i>
+            <span>Lanjut Game</span>
+          </button>
+          <button class="btn btn-ghost btn-full" onclick="endGame()">
+            <i data-lucide="square"></i>
+            <span>Akhiri Game</span>
+          </button>
+        </div>
+        <div id="player-score-wait" class="waiting-msg">
+          <div class="spinner"></div>
+          <span>Menunggu host...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: WINNER -->
+    <div id="screen-winner" class="screen">
+      <div class="winner-bg">
+        <div class="confetti-container" id="confetti-container"></div>
+      </div>
+      <div class="screen-body winner-body">
+        <div class="winner-trophy"><i data-lucide="trophy"></i></div>
+        <div class="winner-label">Pemenang</div>
+        <div class="winner-name" id="winner-name">-</div>
+        <div class="winner-score" id="winner-score">0 Poin</div>
+        <div class="final-scoreboard" id="final-scoreboard"></div>
+        <button class="btn btn-primary btn-full" onclick="returnToHome()">
+          <i data-lucide="home"></i>
+          <span>Kembali ke Menu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN: RULES -->
+    <div id="screen-rules" class="screen">
+      <div class="screen-header">
+        <button class="btn-back" onclick="history.go(-1) || showScreen('screen-home')" aria-label="Kembali"><i data-lucide="arrow-left"></i></button>
+        <span class="header-title">Cara Bermain</span>
+      </div>
+      <div class="screen-body rules-body">
+        <div class="rules-section">
+          <h2><i data-lucide="theater"></i>Apa itu Kelas Pembohong?</h2>
+          <p>Permainan pesta deduksi sosial yang terinspirasi dari Balderdash dan Fibbage. Setiap ronde, fakta aneh dunia nyata dipaparkan dengan satu bagian yang disembunyikan. Tugasmu: mengarang jawaban palsu yang meyakinkan.</p>
+        </div>
+        <div class="rules-flow">
+          <div class="flow-step"><div class="flow-num">1</div><div><strong>Baca</strong> - Pertanyaan dengan bagian kosong ditampilkan</div></div>
+          <div class="flow-step"><div class="flow-num">2</div><div><strong>Bohong</strong> - Tulis jawaban palsu yang meyakinkan dalam 90 detik</div></div>
+          <div class="flow-step"><div class="flow-num">3</div><div><strong>Kumpul</strong> - Semua jawaban dan jawaban asli dikocok</div></div>
+          <div class="flow-step"><div class="flow-num">4</div><div><strong>Vote</strong> - Pilih jawaban yang menurutmu asli dalam 30 detik</div></div>
+          <div class="flow-step"><div class="flow-num">5</div><div><strong>Bongkar</strong> - Jawaban asli terungkap, poin dihitung</div></div>
+        </div>
+        <div class="rules-section">
+          <h2><i data-lucide="trophy"></i>Sistem Poin</h2>
+          <div class="points-table">
+            <div class="pt-row"><span>Tebak jawaban asli</span><span class="pt-pts">+2 Poin</span></div>
+            <div class="pt-row"><span>Pemain lain pilih jawabanmu</span><span class="pt-pts">+1/orang</span></div>
+            <div class="pt-row"><span>Jawaban didiskualifikasi</span><span class="pt-pts">0 Poin</span></div>
+          </div>
+        </div>
+        <div class="rules-section">
+          <h2><i data-lucide="shield-alert"></i>Aturan Wajib</h2>
+          <div class="rule-item bad">Dilarang menulis jawaban yang sama persis dengan jawaban asli</div>
+          <div class="rule-item bad">Dilarang memilih jawabanmu sendiri saat voting</div>
+          <div class="rule-item bad">Dilarang berbicara tentang jawabanmu sebelum fase Vote</div>
+          <div class="rule-item good">Wajib menulis jawaban yang masuk akal secara logika</div>
+          <div class="rule-item good">Wajib menjaga ekspresi saat jawaban dibacakan</div>
+        </div>
+        <div class="rules-section">
+          <h2><i data-lucide="lightbulb"></i>Tips Menang</h2>
+          <div class="tip-item-rules">Jadilah spesifik: angka dan nama bikin meyakinkan</div>
+          <div class="tip-item-rules">Gunakan tahun, tempat, atau institusi agar terdengar otentik</div>
+          <div class="tip-item-rules">Pelajari psikologi lawan dan apa yang mudah mereka percaya</div>
+          <div class="tip-item-rules">Jawaban asli sering terdengar paling tidak biasa</div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showScreen('screen-home')">
+          <i data-lucide="play"></i>
+          <span>Siap Bermain</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none">
+    <div class="loading-content">
+      <div class="spinner big"></div>
+      <div id="loading-text">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    window.refreshIcons = function() {
+      if (window.lucide) {
+        window.lucide.createIcons({
+          attrs: {
+            'stroke-width': 2,
+            'aria-hidden': 'true'
+          }
+        });
+      }
+    };
+    document.addEventListener('DOMContentLoaded', window.refreshIcons);
+
+    window.showScreen = window.showScreen || function(id) {
+      const current = document.querySelector('.screen.active');
+      const next = document.getElementById(id);
+      if (!next || current === next) return;
+      if (current) current.classList.remove('active');
+      next.classList.add('active', 'slide-in');
+      setTimeout(function() {
+        next.classList.remove('slide-in');
+        window.refreshIcons();
+      }, 300);
+    };
+    window.checkPinAndGoToCreate = window.checkPinAndGoToCreate || function() {
+      const pin = prompt('Masukkan PIN untuk membuat ruangan:');
+      if (pin === '183729') {
+        window.showScreen('screen-create');
+        return;
+      }
+
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = 'PIN salah!';
+        toast.className = 'toast show error';
+        setTimeout(function() { toast.classList.remove('show'); }, 3000);
+      } else {
+        alert('PIN salah!');
+      }
+    };
+    window.createRoom = window.createRoom || async function() {
+      try {
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = 'Menyiapkan ruangan...';
+          toast.className = 'toast show success';
+        }
+
+        const room = await import('./assets/js/game/room.js');
+        window.createRoom = room.createRoom;
+        return room.createRoom();
+      } catch (e) {
+        console.error(e);
+        const message = window.location.protocol === 'file:'
+          ? 'Buka game lewat server lokal (http://localhost), bukan langsung dari file.'
+          : 'Gagal menyiapkan ruangan. Firebase/CDN gagal dimuat, cek koneksi lalu refresh.';
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = message;
+          toast.className = 'toast show error';
+          setTimeout(function() { toast.classList.remove('show'); }, 3500);
+        } else {
+          alert(message);
+        }
+      }
+    };
+  </script>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
